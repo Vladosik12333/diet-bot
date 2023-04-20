@@ -1,12 +1,13 @@
 import { token } from './config';
-import { Telegraf } from 'telegraf';
-import { message } from 'telegraf/filters';
+import TelegramBot from 'node-telegram-bot-api';
 
 export default class setupBot {
-    bot = new Telegraf(token);
+    private bot = new TelegramBot(token, { polling: true });
 
     checkFood() {
-        this.bot.start((ctx) => ctx.reply('Welcome'));
-        this.bot.launch();
+        this.bot.on('message', (msg) => {
+            console.log(msg);
+            this.bot.sendMessage(msg.chat.id, 'here');
+        });
     }
 }
