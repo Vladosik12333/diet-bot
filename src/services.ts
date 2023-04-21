@@ -209,11 +209,11 @@ export default class DietBotService implements IDietBotService {
     async checkWorkBotStatus(msg: Message | null) {
         const status = this.workBot;
 
-        // if (!status) {
-        //     if (msg?.chat.id)
-        //         await this.bot.sendMessage(msg.chat.id, NOT_ENOUGH_RIGHTS);
-        //     return false;
-        // }
+        if (!status) {
+            if (msg?.chat.id)
+                await this.bot.sendMessage(msg.chat.id, NOT_ENOUGH_RIGHTS);
+            return false;
+        }
 
         return true;
     }
