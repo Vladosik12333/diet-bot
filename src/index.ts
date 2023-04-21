@@ -1,5 +1,10 @@
-import setupBot from './bot';
+import DietBotRoutes from './routes';
 
-const bot = new setupBot();
+const dietBotRoutes = new DietBotRoutes();
 
-bot.checkFood();
+dietBotRoutes.getFoodReport();
+dietBotRoutes.answerOnFoodReport();
+dietBotRoutes.setTimesOfPhysicalPunishment();
+dietBotRoutes.checkChangingMyRights();
+dietBotRoutes.addedToChat();
+dietBotRoutes.joinedToChat();
