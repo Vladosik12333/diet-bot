@@ -231,13 +231,18 @@ var DietBotService = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var status;
             return __generator(this, function (_a) {
-                status = this.workBot;
-                // if (!status) {
-                //     if (msg?.chat.id)
-                //         await this.bot.sendMessage(msg.chat.id, NOT_ENOUGH_RIGHTS);
-                //     return false;
-                // }
-                return [2 /*return*/, true];
+                switch (_a.label) {
+                    case 0:
+                        status = this.workBot;
+                        if (!!status) return [3 /*break*/, 3];
+                        if (!(msg === null || msg === void 0 ? void 0 : msg.chat.id)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.bot.sendMessage(msg.chat.id, constants_1.NOT_ENOUGH_RIGHTS)];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2: return [2 /*return*/, false];
+                    case 3: return [2 /*return*/, true];
+                }
             });
         });
     };

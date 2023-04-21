@@ -11,3 +11,4 @@ dietBotRoutes.setTimesOfPhysicalPunishment();
 dietBotRoutes.checkChangingMyRights();
 dietBotRoutes.addedToChat();
 dietBotRoutes.joinedToChat();
+console.log('Started');
