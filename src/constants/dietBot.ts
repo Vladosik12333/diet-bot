@@ -35,8 +35,8 @@ export const NEEDED_STATUS = 'administrator';
 
 export const MESSAGE_AFTER_GETTING_NEEDED_STATUS = 'Я почав працювати.';
 
-export const CANNOT_FIND_ACTION =
-    'Не вдалось знайти потрібну дію, будь-ласка видаліть та добавте бота в чат.';
+export const CANNOT_FIND_POLL =
+    'Не вдалось знайти потрібного опиту, будь-ласка видаліть та добавте бота в чат.';
 
 export const MESSAGE_ON_WRAPPER_ERROR = (message: string, error: string) =>
     `Трапилась помилка - ${message}.\nОб'єкт помилки:\n${error}`;

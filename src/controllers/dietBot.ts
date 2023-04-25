@@ -1,6 +1,6 @@
 import { ChatMemberUpdated, Message, PollAnswer } from 'node-telegram-bot-api';
-import DietBotService from './services';
-import { UNKNWON_ERROR } from './constants';
+import DietBotService from '../services/dietBot';
+import { UNKNWON_ERROR } from '../constants/dietBot';
 
 interface IDietBotController {
     readonly service: DietBotService;
@@ -64,13 +64,17 @@ export default class DietBotController implements IDietBotController {
     async wrapper<M>(msg: M, service: Function, errMsg?: Message) {
         try {
             await service(msg);
-        } catch (error) {
+        } catch (error: any) {
             if (msg) {
-                // @ts-expect-error:
-                if (error?.message === '') error.message = UNKNWON_ERROR;
-                const errorToSend = error ? error : new Error(UNKNWON_ERROR);
+                let errorToSend;
 
-                // @ts-expect-error:
+                if (error) {
+                    if (error.message === '') error.message = UNKNWON_ERROR;
+                    errorToSend = error;
+                } else {
+                    errorToSend = new Error(UNKNWON_ERROR);
+                }
+
                 await this.service.messageOnWrapperError(errMsg, errorToSend);
             }
         }

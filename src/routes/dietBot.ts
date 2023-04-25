@@ -1,7 +1,7 @@
-import { token } from './config';
+import { token } from '../config';
 import TelegramBot from 'node-telegram-bot-api';
-import DietBotController from './controllers';
-import DietBotService from './services';
+import DietBotController from '../controllers/dietBot';
+import DietBotService from '../services/dietBot';
 
 interface IDietBotRoutes {
     readonly bot: TelegramBot;

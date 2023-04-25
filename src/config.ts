@@ -1,6 +1,10 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-const { TOKEN: token = '' } = process.env;
+const {
+    TOKEN: token = '',
+    PORT: port = 3333,
+    DB_HOST: dbHost = '',
+} = process.env;
 
-export { token };
+export { token, port, dbHost };
