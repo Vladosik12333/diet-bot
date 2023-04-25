@@ -1,9 +1,11 @@
 import { Schema, model, Document } from 'mongoose';
+import { IUser } from './user';
 
-export interface IPoll extends Document {
-    userIdCollection: Schema.Types.ObjectId;
+export interface IPoll<UserIdCollection = Schema.Types.ObjectId>
+    extends Document {
+    userIdCollection: UserIdCollection;
     pollId: string;
-    messageOfPullId: number;
+    messageIdOfPoll: number;
 }
 
 const pollSchema = new Schema<IPoll>({
@@ -15,7 +17,7 @@ const pollSchema = new Schema<IPoll>({
         type: String,
         default: '',
     },
-    messageOfPullId: {
+    messageIdOfPoll: {
         type: Number,
         required: true,
     },

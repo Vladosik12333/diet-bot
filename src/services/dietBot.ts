@@ -15,25 +15,25 @@ import {
     CANNOT_FIND_POLL,
     MESSAGE_ON_WRAPPER_ERROR,
     NOT_ENOUGH_RIGHTS,
+    MESSAGE_AFTER_GETTING_BAD_STATUS,
 } from '../constants/dietBot';
 
-import User, { IUser } from '../models/users';
+import User, { IUser } from '../models/user';
 import Poll, { IPoll } from '../models/poll';
 import Punishment, { IPunishment } from '../models/punishment';
+import Chat, { IChat } from '../models/chat';
 
 interface IDietBotService {
     readonly bot: TelegramBot;
-    workBot: boolean;
-    actions: Iactions[];
 
-    checkWorkBotStatus(msg: Message | null): void;
+    checkWorkBotStatus(msg: Message): void;
     messageOnWrapperError(msg: Message | undefined, error: Error): void;
     getFoodReport(msg: Message): void;
     answerOnFoodReport(pollMsg: PollAnswer): void;
     setTimeOfPhysicalPunishment(msg: Message): void;
     checkChangingMyRights(msgRights: ChatMemberUpdated): void;
     onFirstBotMessage(msg: Message): void;
-    getUser(msgUser: ImsgUser): Promise<IUser>;
+    getUser(msgUser: ImsgUser): Promise<IUser<IChat> | null>;
 }
 
 interface ImsgUser {
@@ -44,21 +44,8 @@ interface ImsgUser {
     lastName: string | undefined;
 }
 
-interface Iactions {
-    chatId: number;
-    type: actionType;
-    state?: any;
-}
-
-enum actionType {
-    poll = 'poll',
-    activity = 'activity',
-}
-
 export default class DietBotService implements IDietBotService {
     readonly bot;
-    workBot = false;
-    actions: Iactions[] = [];
 
     constructor(bot: TelegramBot) {
         this.bot = bot;
@@ -77,10 +64,13 @@ export default class DietBotService implements IDietBotService {
 
         const user = await this.getUser(userArg);
 
-        await this.bot.sendMessage(user.chatId, REPORT.PENDING(user.name));
+        await this.bot.sendMessage(
+            user?.chatIdCollection.chatId,
+            REPORT.PENDING(user?.name)
+        );
 
         const messageOfPoll = await this.bot.sendPoll(
-            user.chatId,
+            user.chatIdCollection.chatId,
             POLL.QUESTION,
             [POLL.OPTION_1, POLL.OPTION_2],
             {
@@ -98,16 +88,42 @@ export default class DietBotService implements IDietBotService {
     answerOnFoodReport = async (pollMsg: PollAnswer) => {
         const { poll_id } = pollMsg;
 
-        const poll = await Poll.findOne<IPoll>({
-            pollId: poll_id,
-        }).populate<IUser>('userIdCollection');
+        const [poll]: any = await Poll.aggregate([
+            {
+                $match: {
+                    pollId: poll_id,
+                },
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'userIdCollection',
+                    foreignField: '_id',
+                    as: 'user',
+                    pipeline: [
+                        {
+                            $lookup: {
+                                from: 'chats',
+                                localField: 'chatIdCollection',
+                                foreignField: '_id',
+                                as: 'chat',
+                            },
+                        },
+                    ],
+                },
+            },
+        ]);
 
         if (!poll) throw new Error(CANNOT_FIND_POLL);
 
-        const { messageOfPullId, chatId, nick, name, userIdCollection } = poll;
+        const { messageIdOfPoll, _id: pollId, user } = poll;
 
-        const finishPull = async (approved: boolean) => {
-            await this.bot.stopPoll(chatId, messageOfPullId);
+        const { chat, nick, name, _id: userId } = user[0];
+
+        const { chatId } = chat[0];
+
+        const finishPoll = async (approved: boolean) => {
+            await this.bot.stopPoll(chatId, messageIdOfPoll);
 
             await this.bot.sendMessage(
                 chatId,
@@ -115,14 +131,16 @@ export default class DietBotService implements IDietBotService {
             );
         };
 
-        await Poll.deleteOne({ _id: poll_id });
+        await Poll.deleteOne({ _id: pollId });
 
         if (pollMsg.option_ids[0] === 0) {
-            await finishPull(true);
+            await finishPoll(true);
         } else {
-            await finishPull(false);
+            await finishPoll(false);
 
-            const punishment = await Punishment.findOne({ userIdCollection });
+            const punishment = await Punishment.findOne({
+                userIdCollection: userId,
+            });
 
             const nameToResponse = name ? name : nick;
             const activity = punishment?.activity ?? 100;
@@ -154,19 +172,24 @@ export default class DietBotService implements IDietBotService {
 
         const activity = Number(text?.match(/\d+/)) ?? 100;
 
-        const oldPunishment = await Punishment.findOne(user._id);
+        const oldPunishment = await Punishment.findOne({
+            userIdCollection: user._id,
+        });
 
         if (oldPunishment) {
-            await Punishment.findOneAndUpdate(oldPunishment._id, { activity });
+            await Punishment.findOneAndUpdate(
+                { _id: oldPunishment._id },
+                { activity }
+            );
         } else {
             await Punishment.create({
-                userIdCollection: user.chatId,
+                userIdCollection: user._id,
                 activity,
             });
         }
 
         await this.bot.sendMessage(
-            user.chatId,
+            user.chatIdCollection.chatId,
             MESSAGE_AFTER_CHANGING_PUNISHMENT(user.name, activity)
         );
     };
@@ -177,15 +200,32 @@ export default class DietBotService implements IDietBotService {
             chat: { id },
         } = rightsMsg;
 
+        const checkChat = async (workStatus: boolean) => {
+            const chat = await Chat.findOneAndUpdate(
+                { chatId: id },
+                { workStatus }
+            );
+
+            return !!chat;
+        };
+
         if (newRights.status === NEEDED_STATUS && newRights.can_pin_messages) {
-            this.workBot = true;
+            if (!(await checkChat(true))) return;
 
             await this.bot.sendMessage(id, MESSAGE_AFTER_GETTING_NEEDED_STATUS);
+        } else {
+            if (!(await checkChat(false))) return;
+
+            await this.bot.sendMessage(id, MESSAGE_AFTER_GETTING_BAD_STATUS);
         }
     };
 
     onFirstBotMessage = async (msg: Message) => {
         const { id } = msg.chat;
+
+        await Chat.create({
+            chatId: id,
+        });
 
         await this.bot.sendMessage(id, RULES);
         await this.bot.sendMessage(id, GREETING_MESSAGE);
@@ -196,36 +236,60 @@ export default class DietBotService implements IDietBotService {
             await this.bot.sendMessage(
                 msg.chat.id,
                 MESSAGE_ON_WRAPPER_ERROR(
-                    error?.message ?? '',
+                    error.message,
                     error?.stack?.toString() ?? ''
                 )
             );
     };
 
-    checkWorkBotStatus = async (msg: Message | null) => {
-        const status = this.workBot;
+    checkWorkBotStatus = async (msg: Message) => {
+        const id = msg?.chat.id;
 
-        if (!status) {
-            if (msg?.chat.id)
-                await this.bot.sendMessage(msg.chat.id, NOT_ENOUGH_RIGHTS);
-            return false;
-        }
+        const chat = await Chat.findOne({ chatId: id });
 
-        return true;
+        if (chat?.workStatus) return true;
+
+        await this.bot.sendMessage(id, NOT_ENOUGH_RIGHTS);
+
+        return false;
     };
 
-    getUser = async (msgUser: ImsgUser): Promise<IUser> => {
-        const user = await User.findOne({ userId: msgUser.userId });
+    getUser = async (msgUser: ImsgUser): Promise<IUser<IChat>> => {
+        const users: Array<IUser<IChat> | null> = await User.find({
+            userId: msgUser.userId,
+        }).populate('chatIdCollection');
+
+        const chat = await Chat.findOne({ chatId: msgUser.chatId });
+        const user = users.find(
+            (user) =>
+                user?.chatIdCollection._id.toString() === chat?._id.toString()
+        );
 
         if (!user) {
+            let chat;
+            chat = await Chat.findOne({ chatId: msgUser.chatId });
+
+            if (!chat) {
+                chat = await Chat.create({
+                    chatId: msgUser.chatId,
+                    workStatus: true,
+                });
+            }
+
             const newUser = await User.create({
-                chatId: msgUser.chatId,
+                chatIdCollection: chat._id,
                 userId: msgUser.userId ?? -1,
-                nick: msgUser.nick ?? '',
-                name: `${msgUser.firstName ?? ''} ${msgUser.lastName ?? ''}`,
+                nick: msgUser.nick?.trimEnd() ?? '',
+                name: `${msgUser.firstName ?? ''} ${
+                    msgUser.lastName ?? ''
+                }`.trimEnd(),
             });
 
-            return newUser;
+            const user: any = newUser;
+
+            user.chatIdCollection = chat;
+
+            return user;
         }
 
         return user;

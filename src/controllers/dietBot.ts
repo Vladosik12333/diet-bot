@@ -36,8 +36,7 @@ export default class DietBotController implements IDietBotController {
     }
 
     async answerOnFoodReport(pollMsg: PollAnswer) {
-        if (await this.service.checkWorkBotStatus(null))
-            await this.wrapper(pollMsg, this.service.answerOnFoodReport);
+        await this.wrapper(pollMsg, this.service.answerOnFoodReport);
     }
 
     async setTimesOfPhysicalPunishment(msg: Message) {

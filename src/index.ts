@@ -3,8 +3,6 @@ import { dbHost, port } from './config';
 import mongoose from 'mongoose';
 import startBot from './app';
 
-console.log(dbHost);
-
 mongoose
     .connect(dbHost)
     .then(() => {

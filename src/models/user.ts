@@ -1,8 +1,9 @@
 import { Schema, model, Document } from 'mongoose';
 
-export interface IUser extends Document {
+export interface IUser<ChatIdCollection = Schema.Types.ObjectId>
+    extends Document {
     userId: number;
-    chatId: number;
+    chatIdCollection: ChatIdCollection;
     nick: string;
     name: string;
 }
@@ -12,9 +13,10 @@ const userSchema = new Schema<IUser>({
         type: Number,
         default: -1,
     },
-    chatId: {
-        type: Number,
+    chatIdCollection: {
+        type: Schema.Types.ObjectId,
         required: true,
+        ref: 'chat',
     },
     nick: {
         type: String,
