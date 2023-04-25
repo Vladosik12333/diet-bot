@@ -38,8 +38,7 @@ export const MESSAGE_AFTER_GETTING_NEEDED_STATUS = 'Я почав працюва
 export const MESSAGE_AFTER_GETTING_BAD_STATUS =
     'Ви забрали в мене потрібні права, тому я перестав працювати.\nP.S. Мені потрібно видати права Адміністратор - право прикріпляти повідомлення.';
 
-export const CANNOT_FIND_POLL =
-    'Не вдалось знайти потрібного опиту, будь-ласка видаліть та добавте бота в чат.';
+export const CANNOT_FIND_POLL = 'Не вдалось знайти потрібного опиту.';
 
 export const MESSAGE_ON_WRAPPER_ERROR = (message: string, error: string) =>
     `Трапилась помилка - ${message}\nОб'єкт помилки:\n${error}`;
@@ -48,3 +47,6 @@ export const NOT_ENOUGH_RIGHTS =
     'Я не маю потрібних прав для роботи. Мені потрібно видати права Адміністратор - право прикріпляти повідомлення.';
 
 export const UNKNWON_ERROR = 'Невідома помилка';
+
+export const CREATED_CHAT_BY_ERROR =
+    'Трапилась помилка і були перестворені деякі дані. Потрібно видати права Адміністратор - право прикріпляти повідомлення та ввести команду повторно.';

@@ -19,14 +19,14 @@ import {
 } from '../constants/dietBot';
 
 import User, { IUser } from '../models/user';
-import Poll, { IPoll } from '../models/poll';
-import Punishment, { IPunishment } from '../models/punishment';
+import Poll from '../models/poll';
+import Punishment from '../models/punishment';
 import Chat, { IChat } from '../models/chat';
 
 interface IDietBotService {
     readonly bot: TelegramBot;
 
-    checkWorkBotStatus(msg: Message): void;
+    checkWorkBotStatus(msg: Message | number): void;
     messageOnWrapperError(msg: Message | undefined, error: Error): void;
     getFoodReport(msg: Message): void;
     answerOnFoodReport(pollMsg: PollAnswer): void;
@@ -119,6 +119,8 @@ export default class DietBotService implements IDietBotService {
         const { messageIdOfPoll, _id: pollId, user } = poll;
 
         const { chat, nick, name, _id: userId } = user[0];
+
+        if (!(await this.checkWorkBotStatus(chat[0].chatId))) return;
 
         const { chatId } = chat[0];
 
@@ -232,7 +234,7 @@ export default class DietBotService implements IDietBotService {
     };
 
     messageOnWrapperError = async (msg: Message | undefined, error: Error) => {
-        if (msg)
+        if (msg) {
             await this.bot.sendMessage(
                 msg.chat.id,
                 MESSAGE_ON_WRAPPER_ERROR(
@@ -240,10 +242,25 @@ export default class DietBotService implements IDietBotService {
                     error?.stack?.toString() ?? ''
                 )
             );
+        } else {
+            console.log(
+                '/ERR-01/Err with a router that hasn`t an access to the message object\n',
+                MESSAGE_ON_WRAPPER_ERROR(
+                    error.message,
+                    error?.stack?.toString() ?? ''
+                )
+            );
+        }
     };
 
-    checkWorkBotStatus = async (msg: Message) => {
-        const id = msg?.chat.id;
+    checkWorkBotStatus = async (msg: Message | number) => {
+        let id;
+
+        if (typeof msg === 'number') {
+            id = msg;
+        } else {
+            id = msg?.chat.id;
+        }
 
         const chat = await Chat.findOne({ chatId: id });
 
