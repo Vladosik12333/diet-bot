@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start1": "rimraf ./build && tsc && node build/index.js",
+    "disfjdsfn": "rimraf ./build && tsc && node build/index.js",
     "start:dev": "npx nodemon"
   },
   "author": "Vladyslav Babiak",
