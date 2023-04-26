@@ -1,4 +1,4 @@
-import { dbHost, port } from './config';
+import { dbHost } from './config';
 import mongoose from 'mongoose';
 import startBot from './app';
 

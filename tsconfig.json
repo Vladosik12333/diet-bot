@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ESNEXT",
-    "module": "esnext",
+    "target": "ES5",
+    "module": "CommonJS",
     "lib": [
-      "ES2021"
+      "ES6"
     ],
     "outDir": "./dist/",
     "strict": true,
