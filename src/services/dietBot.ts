@@ -61,7 +61,7 @@ export default class DietBotService implements IDietBotService {
 
         await this.bot.api.sendMessage(
             user?.chatIdCollection.chatId,
-            REPORT.PENDING(user?.name)
+            REPORT.PENDING(user?.nick)
         );
 
         const messageOfPoll = await this.bot.api.sendPoll(
@@ -190,7 +190,7 @@ export default class DietBotService implements IDietBotService {
 
         await this.bot.api.sendMessage(
             user.chatIdCollection.chatId,
-            MESSAGE_AFTER_CHANGING_PUNISHMENT(user.name, activity)
+            MESSAGE_AFTER_CHANGING_PUNISHMENT(user.nick, activity)
         );
     };
 
