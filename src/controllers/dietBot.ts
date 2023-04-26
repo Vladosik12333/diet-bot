@@ -1,17 +1,15 @@
-import { ChatMemberUpdated, Message, PollAnswer } from 'node-telegram-bot-api';
 import DietBotService from '../services/dietBot';
 import { UNKNWON_ERROR } from '../constants/dietBot';
+import { Context } from 'grammy';
 
 interface IDietBotController {
     readonly service: DietBotService;
-    wrapper<M>(msg: M, service: Function, errMsg?: Message): void;
+    wrapper<M>(msg: M, service: Function, errMsg?: Context): void;
 
-    getFoodReport(msg: Message): void;
-    answerOnFoodReport(pollMsg: PollAnswer): void;
-    setTimesOfPhysicalPunishment(msg: Message): void;
-    checkChangingMyRights(rightsMsg: ChatMemberUpdated): void;
-    addedToChat(msg: Message): void;
-    joinedToChat(msg: Message): void;
+    getFoodReport(msg: Context): void;
+    answerOnFoodReport(msg: Context): void;
+    setTimesOfPhysicalPunishment(msg: Context): void;
+    checkMyChatMember(msg: Context): void;
 }
 
 export default class DietBotController implements IDietBotController {
@@ -19,48 +17,31 @@ export default class DietBotController implements IDietBotController {
 
     constructor(service: DietBotService) {
         this.service = service;
-
-        this.getFoodReport = this.getFoodReport.bind(this);
-        this.answerOnFoodReport = this.answerOnFoodReport.bind(this);
-        this.setTimesOfPhysicalPunishment =
-            this.setTimesOfPhysicalPunishment.bind(this);
-        this.checkChangingMyRights = this.checkChangingMyRights.bind(this);
-        this.addedToChat = this.addedToChat.bind(this);
-        this.joinedToChat = this.joinedToChat.bind(this);
-        this.wrapper = this.wrapper.bind(this);
     }
 
-    async getFoodReport(msg: Message) {
+    getFoodReport = async (msg: Context) => {
         if (await this.service.checkWorkBotStatus(msg))
             await this.wrapper(msg, this.service.getFoodReport, msg);
-    }
+    };
 
-    async answerOnFoodReport(pollMsg: PollAnswer) {
-        await this.wrapper(pollMsg, this.service.answerOnFoodReport);
-    }
+    answerOnFoodReport = async (msg: Context) => {
+        await this.wrapper(msg, this.service.answerOnFoodReport);
+    };
 
-    async setTimesOfPhysicalPunishment(msg: Message) {
+    setTimesOfPhysicalPunishment = async (msg: Context) => {
         if (await this.service.checkWorkBotStatus(msg))
             await this.wrapper(
                 msg,
                 this.service.setTimeOfPhysicalPunishment,
                 msg
             );
-    }
+    };
 
-    async checkChangingMyRights(rightsMsg: ChatMemberUpdated) {
-        await this.wrapper(rightsMsg, this.service.checkChangingMyRights);
-    }
+    checkMyChatMember = async (msg: Context) => {
+        await this.wrapper(msg, this.service.checkMyChatMember);
+    };
 
-    async addedToChat(msg: Message) {
-        await this.wrapper(msg, this.service.onFirstBotMessage, msg);
-    }
-
-    async joinedToChat(msg: Message) {
-        await this.wrapper(msg, this.service.onFirstBotMessage, msg);
-    }
-
-    async wrapper<M>(msg: M, service: Function, errMsg?: Message) {
+    wrapper = async <M>(msg: M, service: Function, errMsg?: Context) => {
         try {
             await service(msg);
         } catch (error: any) {
@@ -68,7 +49,7 @@ export default class DietBotController implements IDietBotController {
                 let errorToSend;
 
                 if (error) {
-                    if (error.message === '') error.message = UNKNWON_ERROR;
+                    if (error?.message === '') error.message = UNKNWON_ERROR;
                     errorToSend = error;
                 } else {
                     errorToSend = new Error(UNKNWON_ERROR);
@@ -77,5 +58,5 @@ export default class DietBotController implements IDietBotController {
                 await this.service.messageOnWrapperError(errMsg, errorToSend);
             }
         }
-    }
+    };
 }

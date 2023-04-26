@@ -36,81 +36,57 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var constants_1 = require("./constants");
+var dietBot_1 = require("../constants/dietBot");
 var DietBotController = /** @class */ (function () {
     function DietBotController(service) {
-        this.service = service;
-        this.getFoodReport = this.getFoodReport.bind(this);
-        this.answerOnFoodReport = this.answerOnFoodReport.bind(this);
-        this.setTimesOfPhysicalPunishment =
-            this.setTimesOfPhysicalPunishment.bind(this);
-        this.checkChangingMyRights = this.checkChangingMyRights.bind(this);
-        this.addedToChat = this.addedToChat.bind(this);
-        this.joinedToChat = this.joinedToChat.bind(this);
-        this.wrapper = this.wrapper.bind(this);
-    }
-    DietBotController.prototype.getFoodReport = function (msg) {
-        return __awaiter(this, void 0, void 0, function () {
+        var _this = this;
+        this.getFoodReport = function (msg) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.service.checkWorkBotStatus(msg)];
+                    case 0: 
+                    // if (await this.service.checkWorkBotStatus(msg))
+                    return [4 /*yield*/, this.wrapper(msg, this.service.getFoodReport, msg)];
                     case 1:
-                        if (!_a.sent()) return [3 /*break*/, 3];
-                        return [4 /*yield*/, this.wrapper(msg, this.service.getFoodReport, msg)];
-                    case 2:
+                        // if (await this.service.checkWorkBotStatus(msg))
                         _a.sent();
-                        _a.label = 3;
-                    case 3: return [2 /*return*/];
+                        return [2 /*return*/];
                 }
             });
-        });
-    };
-    DietBotController.prototype.answerOnFoodReport = function (pollMsg) {
-        return __awaiter(this, void 0, void 0, function () {
+        }); };
+        this.answerOnFoodReport = function (msg) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.service.checkWorkBotStatus(null)];
-                    case 1:
-                        if (!_a.sent()) return [3 /*break*/, 3];
-                        return [4 /*yield*/, this.wrapper(pollMsg, this.service.answerOnFoodReport)];
-                    case 2:
-                        _a.sent();
-                        _a.label = 3;
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    DietBotController.prototype.setTimesOfPhysicalPunishment = function (msg) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.service.checkWorkBotStatus(msg)];
-                    case 1:
-                        if (!_a.sent()) return [3 /*break*/, 3];
-                        return [4 /*yield*/, this.wrapper(msg, this.service.setTimeOfPhysicalPunishment, msg)];
-                    case 2:
-                        _a.sent();
-                        _a.label = 3;
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    DietBotController.prototype.checkChangingMyRights = function (rightsMsg) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.wrapper(rightsMsg, this.service.checkChangingMyRights)];
+                    case 0: return [4 /*yield*/, this.wrapper(msg, this.service.answerOnFoodReport)];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
                 }
             });
-        });
-    };
-    DietBotController.prototype.addedToChat = function (msg) {
-        return __awaiter(this, void 0, void 0, function () {
+        }); };
+        this.setTimesOfPhysicalPunishment = function (msg) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: 
+                    // if (await this.service.checkWorkBotStatus(msg))
+                    return [4 /*yield*/, this.wrapper(msg, this.service.setTimeOfPhysicalPunishment, msg)];
+                    case 1:
+                        // if (await this.service.checkWorkBotStatus(msg))
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        }); };
+        this.checkChangingMyRights = function (msg) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.wrapper(msg, this.service.checkChangingMyRights)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        }); };
+        this.joinedToChat = function (msg) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.wrapper(msg, this.service.onFirstBotMessage, msg)];
@@ -119,22 +95,8 @@ var DietBotController = /** @class */ (function () {
                         return [2 /*return*/];
                 }
             });
-        });
-    };
-    DietBotController.prototype.joinedToChat = function (msg) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.wrapper(msg, this.service.onFirstBotMessage, msg)];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
-    DietBotController.prototype.wrapper = function (msg, service, errMsg) {
-        return __awaiter(this, void 0, void 0, function () {
+        }); };
+        this.wrapper = function (msg, service, errMsg) { return __awaiter(_this, void 0, void 0, function () {
             var error_1, errorToSend;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -147,22 +109,26 @@ var DietBotController = /** @class */ (function () {
                     case 2:
                         error_1 = _a.sent();
                         if (!msg) return [3 /*break*/, 4];
-                        // @ts-expect-error:
-                        if ((error_1 === null || error_1 === void 0 ? void 0 : error_1.message) === '')
-                            error_1.message = constants_1.UNKNWON_ERROR;
-                        errorToSend = error_1 ? error_1 : new Error(constants_1.UNKNWON_ERROR);
-                        // @ts-expect-error:
+                        errorToSend = void 0;
+                        if (error_1) {
+                            if (error_1.message === '')
+                                error_1.message = dietBot_1.UNKNWON_ERROR;
+                            errorToSend = error_1;
+                        }
+                        else {
+                            errorToSend = new Error(dietBot_1.UNKNWON_ERROR);
+                        }
                         return [4 /*yield*/, this.service.messageOnWrapperError(errMsg, errorToSend)];
                     case 3:
-                        // @ts-expect-error:
                         _a.sent();
                         _a.label = 4;
                     case 4: return [3 /*break*/, 5];
                     case 5: return [2 /*return*/];
                 }
             });
-        });
-    };
+        }); };
+        this.service = service;
+    }
     return DietBotController;
 }());
 exports.default = DietBotController;

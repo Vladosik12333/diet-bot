@@ -8,11 +8,11 @@ export const REPORT = {
     PENDING(username: string) {
         return `@${username} , ваш звіт про прийом їжі отриманий. Очікується його затвердження!`;
     },
-    APPROVED(username: string) {
-        return `@${username}, ваш звіт про прийом їжі прийнятий!`;
+    APPROVED(username: string, usernameJudge: string) {
+        return `@${username}, ваш звіт про прийом їжі прийнятий!\nВирішив(ла) - @${usernameJudge}`;
     },
-    REJECTED(username: string) {
-        return `@${username}, ваш звіт про прийом їжі відхилений!`;
+    REJECTED(username: string, usernameJudge: string) {
+        return `@${username}, ваш звіт про прийом їжі відхилений!\nВирішив(ла) - @${usernameJudge}`;
     },
     MESSAGE_AFTER_APPROVED(name: string, activity: number) {
         return `${name} +${activity}`;

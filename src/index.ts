@@ -8,9 +8,6 @@ mongoose
     .then(() => {
         console.log('Database connection successful');
         startBot();
-        // app.listen(PORT, () => {
-        //     console.log(`Server running. Use our API on port: ${PORT}`);
-        // });
     })
     .catch((err) => {
         console.log('Error with connect to database', err);
