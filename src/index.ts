@@ -1,4 +1,3 @@
-// import from ('./app');
 import { dbHost, port } from './config';
 import mongoose from 'mongoose';
 import startBot from './app';
