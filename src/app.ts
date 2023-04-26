@@ -1,6 +1,6 @@
 import DietBotRoutes from './routes/dietBot';
 import { Bot, webhookCallback } from 'grammy';
-import { token, port } from './config';
+import { token, port, domain } from './config';
 import express from 'express';
 
 export default function startBot() {
@@ -18,10 +18,8 @@ export default function startBot() {
     dietBotRoutes.setTimesOfPhysicalPunishment();
     dietBotRoutes.checkChangingMyRights();
 
-    bot.start();
-
-    // app.listen(port, async () => {
-    //     bot.api.setWebhook(`http://localhost/${token}`);
-    //     console.log('Bot started');
-    // });
+    app.listen(port, async () => {
+        await bot.api.setWebhook(`https://${domain}/${token}`);
+        console.log('Bot started');
+    });
 }
