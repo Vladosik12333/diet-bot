@@ -9,7 +9,7 @@ export default function startBot() {
     const app = express();
 
     app.use(express.json());
-    app.use(`/${token}`, webhookCallback(bot, 'express'));
+    app.use('', webhookCallback(bot, 'express'));
 
     const dietBotRoutes = new DietBotRoutes(bot);
 
@@ -19,7 +19,7 @@ export default function startBot() {
     dietBotRoutes.checkChangingMyRights();
 
     app.listen(port, async () => {
-        await bot.api.setWebhook(`https://${domain}/${token}`);
+        await bot.api.setWebhook(`https://${domain}`);
         console.log('Bot started');
     });
 }
