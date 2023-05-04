@@ -19,7 +19,6 @@ export default function startBot() {
     dietBotRoutes.checkChangingMyRights();
 
     app.listen(port, async () => {
-        await bot.api.setWebhook(`https://${domain}`);
         console.log('Bot started');
     });
 }

@@ -12,3 +12,8 @@ mongoose
         console.log('Error with connect to database', err);
         process.exit(1);
     });
+
+/**
+@Console command to set up the webhook for Telegram - 
+curl "https://api.telegram.org/bot$TELEGRAM_API_TOKEN/setWebhook?url=$TELEGRAM_WEBHOOK_URL"
+*/
