@@ -9,7 +9,7 @@ export default function startBot() {
     const app = express();
 
     app.use(express.json());
-    app.use('', webhookCallback(bot, 'express'));
+    app.use(webhookCallback(bot, 'express'));
 
     const dietBotRoutes = new DietBotRoutes(bot);
 
