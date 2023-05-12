@@ -41,6 +41,6 @@ export default function startBot() {
             }
         }
 
-        process.exit(1);
+        process.exit(2);
     });
 }
