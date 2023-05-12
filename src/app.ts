@@ -1,6 +1,6 @@
 import DietBotRoutes from './routes/dietBot';
 import { Bot, webhookCallback } from 'grammy';
-import { token, port, domain } from './config';
+import { token, port, domain, env } from './config';
 import express from 'express';
 import axios from 'axios';
 
@@ -18,6 +18,11 @@ export default function startBot() {
     dietBotRoutes.answerOnFoodReport();
     dietBotRoutes.setTimesOfPhysicalPunishment();
     dietBotRoutes.checkChangingMyRights();
+
+    if (env === 'DEV') {
+        bot.start();
+        return;
+    }
 
     app.listen(port, async () => {
         interface IResponseBotWebhook {

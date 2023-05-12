@@ -20,7 +20,10 @@ export default class DietBotController implements IDietBotController {
     }
 
     getFoodReport = async (msg: Context) => {
-        if (await this.service.checkWorkBotStatus(msg))
+        if (
+            (await this.service.checkGroup(msg)) &&
+            (await this.service.checkWorkBotStatus(msg))
+        )
             await this.wrapper(msg, this.service.getFoodReport, msg);
     };
 
@@ -29,7 +32,10 @@ export default class DietBotController implements IDietBotController {
     };
 
     setTimesOfPhysicalPunishment = async (msg: Context) => {
-        if (await this.service.checkWorkBotStatus(msg))
+        if (
+            (await this.service.checkGroup(msg)) &&
+            (await this.service.checkWorkBotStatus(msg))
+        )
             await this.wrapper(
                 msg,
                 this.service.setTimeOfPhysicalPunishment,

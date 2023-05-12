@@ -28,6 +28,7 @@ interface IDietBotService {
     setTimeOfPhysicalPunishment(msg: Context): void;
     checkMyChatMember(msg: Context): void;
     getUser(msgUser: ImsgUser): Promise<IUser<IChat> | null>;
+    checkGroup(msg: Context): Promise<boolean>;
 }
 
 interface ImsgUser {
@@ -310,5 +311,11 @@ export default class DietBotService implements IDietBotService {
         }
 
         return user;
+    };
+
+    checkGroup = async (msg: Context): Promise<boolean> => {
+        if (msg.chat?.type !== 'group') return false;
+
+        return true;
     };
 }
