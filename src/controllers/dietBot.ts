@@ -4,12 +4,13 @@ import { Context } from 'grammy';
 
 interface IDietBotController {
     readonly service: DietBotService;
-    wrapper<M>(msg: M, service: Function, errMsg?: Context): void;
+    wrapper(msg: Context, service: Function, errMsg?: Context): void;
 
     getFoodReport(msg: Context): void;
     answerOnFoodReport(msg: Context): void;
     setTimesOfPhysicalPunishment(msg: Context): void;
     checkMyChatMember(msg: Context): void;
+    getMessageStart(msg: Context): void;
 }
 
 export default class DietBotController implements IDietBotController {
@@ -44,14 +45,21 @@ export default class DietBotController implements IDietBotController {
     };
 
     checkMyChatMember = async (msg: Context) => {
-        await this.wrapper(msg, this.service.checkMyChatMember);
+        if (await this.service.checkGroup(msg))
+            await this.wrapper(msg, this.service.checkMyChatMember, msg);
     };
 
-    wrapper = async <M>(msg: M, service: Function, errMsg?: Context) => {
+    getMessageStart = async (msg: Context) => {
+        await this.wrapper(msg, this.service.getMessageStart, msg);
+    };
+
+    wrapper = async (msg: Context, service: Function, errMsg?: Context) => {
         try {
             await service(msg);
         } catch (error: any) {
             if (msg) {
+                console.log(error);
+                console.log(msg);
                 let errorToSend;
 
                 if (error) {

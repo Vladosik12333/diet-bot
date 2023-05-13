@@ -10,6 +10,7 @@ import {
     MESSAGE_ON_WRAPPER_ERROR,
     NOT_ENOUGH_RIGHTS,
     MESSAGE_AFTER_GETTING_BAD_STATUS,
+    MESSAGE_ON_START,
 } from '../constants/dietBot';
 
 import User, { IUser } from '../models/user';
@@ -29,6 +30,7 @@ interface IDietBotService {
     checkMyChatMember(msg: Context): void;
     getUser(msgUser: ImsgUser): Promise<IUser<IChat> | null>;
     checkGroup(msg: Context): Promise<boolean>;
+    getMessageStart(msg: Context): void;
 }
 
 interface ImsgUser {
@@ -230,6 +232,15 @@ export default class DietBotService implements IDietBotService {
             await this.bot.api.sendMessage(
                 chat.chatId,
                 MESSAGE_AFTER_GETTING_BAD_STATUS
+            );
+        }
+    };
+
+    getMessageStart = async (msg: Context) => {
+        if (msg.chat?.type === 'private') {
+            await this.bot.api.sendMessage(
+                msg.chat?.id ?? '',
+                MESSAGE_ON_START
             );
         }
     };

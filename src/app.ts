@@ -18,9 +18,11 @@ export default function startBot() {
     dietBotRoutes.answerOnFoodReport();
     dietBotRoutes.setTimesOfPhysicalPunishment();
     dietBotRoutes.checkChangingMyRights();
+    dietBotRoutes.getMessageStart();
 
     if (env === 'DEV') {
         bot.start();
+        console.log('Bot started:dev');
         return;
     }
 
@@ -41,7 +43,7 @@ export default function startBot() {
             );
 
             if (response.data.ok && response.data.result) {
-                console.log('Bot started');
+                console.log('Bot started:prod');
                 return;
             }
         }

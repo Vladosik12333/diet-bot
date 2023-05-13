@@ -11,6 +11,7 @@ interface IDietBotRoutes {
     answerOnFoodReport(): void;
     setTimesOfPhysicalPunishment(): void;
     checkChangingMyRights(): void;
+    getMessageStart(): void;
 }
 
 export default class DietBotRoutes implements IDietBotRoutes {
@@ -49,6 +50,12 @@ export default class DietBotRoutes implements IDietBotRoutes {
 
     checkChangingMyRights = () => {
         this.bot.on('my_chat_member', this.controller.checkMyChatMember);
+    };
+
+    getMessageStart = () => {
+        this.bot
+            .filter(this.filterByRegExp(/^\/start$/))
+            .command('start', this.controller.getMessageStart);
     };
 
     filterByRegExp = (regExp: RegExp) => (msg: Context) =>

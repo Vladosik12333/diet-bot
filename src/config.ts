@@ -6,7 +6,7 @@ const {
     PORT: port = 3333,
     DB_HOST: dbHost = '',
     DOMAIN: domain = '',
-    ENV: env = 'PROD'
+    ENV: env = '',
 } = process.env;
 
 export { token, port, dbHost, domain, env };
