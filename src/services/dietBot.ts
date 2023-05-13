@@ -23,7 +23,10 @@ interface IDietBotService {
     readonly bot: Bot;
 
     checkWorkBotStatus(msg: Context | number): void;
-    messageOnWrapperError(msg: Context | undefined, error: Error): void;
+    messageOnWrapperError<E extends IE>(
+        msg: Context | undefined,
+        error: E
+    ): void;
     getFoodReport(msg: Context): void;
     answerOnFoodReport(msg: Context): void;
     setTimeOfPhysicalPunishment(msg: Context): void;
@@ -39,6 +42,10 @@ interface ImsgUser {
     nick: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
+}
+
+interface IE extends Error {
+    error_code: number;
 }
 
 export default class DietBotService implements IDietBotService {
@@ -210,6 +217,18 @@ export default class DietBotService implements IDietBotService {
 
             await this.bot.api.sendMessage(chatId, RULES);
             await this.bot.api.sendMessage(chatId, GREETING_MESSAGE);
+
+            if (infoMe?.status === NEEDED_STATUS && infoMe?.can_pin_messages) {
+                await Chat.findOneAndUpdate(
+                    { chatId: chatId },
+                    { workStatus: true }
+                );
+
+                await this.bot.api.sendMessage(
+                    chatId,
+                    MESSAGE_AFTER_GETTING_NEEDED_STATUS
+                );
+            }
             return;
         }
 
@@ -245,8 +264,11 @@ export default class DietBotService implements IDietBotService {
         }
     };
 
-    messageOnWrapperError = async (msg: Context | undefined, error: Error) => {
-        if (msg) {
+    messageOnWrapperError = async <E extends IE>(
+        msg: Context | undefined,
+        error: E
+    ) => {
+        if (error?.error_code !== 403 && msg) {
             await this.bot.api.sendMessage(
                 msg?.chat?.id ?? '',
                 MESSAGE_ON_WRAPPER_ERROR(
@@ -325,8 +347,9 @@ export default class DietBotService implements IDietBotService {
     };
 
     checkGroup = async (msg: Context): Promise<boolean> => {
-        if (msg.chat?.type !== 'group') return false;
+        if (msg.chat?.type === 'group' || msg.chat?.type === 'supergroup')
+            return true;
 
-        return true;
+        return false;
     };
 }

@@ -58,8 +58,6 @@ export default class DietBotController implements IDietBotController {
             await service(msg);
         } catch (error: any) {
             if (msg) {
-                console.log(error);
-                console.log(msg);
                 let errorToSend;
 
                 if (error) {
